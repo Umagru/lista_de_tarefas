@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
 import { TouchableOpacity } from 'react-native-web';
 
+import { Ionicons, Fontisto } from '@expo/vector-icons'
+
 export default function App() {
-  const [task, setTask] = useState(['Adicione novas tarefas']);
+  const [task, setTask] = useState(['Adicione novas tarefas', 'Lavar os pratos', 'Tomar banho']);
   const [newTask, setNewTask] = useState('');
 
   async function addTask() {
@@ -13,15 +15,35 @@ export default function App() {
   return (
     <>
       <View style={styles.container}>
-        <view style={styles.Body}>
-          <Text>Hello</Text>
-        </view>
+        <View style={styles.Body}>
+          <View>
+            <Text style={styles.Titulo}>Lista de Tarefas</Text>
+          </View>
+          <FlatList
+            style={styles.FlatList}
+            data={task}
+            keyExtractor={item => item.toString()}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <View style={styles.Item}>
+                <Text style={styles.Texto}>{item}</Text>
+                <TouchableOpacity>
+                  <Fontisto name='checkbox-passive' size={25} color='#f64c75' />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </View>
         <View style={styles.Form}>
-          <TextInput 
-          style={styles.Input}
-          placeholderTextColor='#999'
+          <TextInput
+            style={styles.Input}
+            placeholderTextColor='#999'
+            autoCorrect={true}
+            placeholder='Adicione uma tarefa'
+            maxLength={41}
           />
           <TouchableOpacity style={styles.Button} onPress={() => addTask()}>
+            <Ionicons name='ios-add' size={25} color='25' />
           </TouchableOpacity>
         </View>
       </View>
@@ -35,11 +57,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingVertical: 20,
-    marginTop: 20,
-
+    // marginTop: 20,
   },
   Body: {
-    flex: 1
+    flex: 1,
+    // backgroundColor: '#eee',
   },
   Form: {
     padding: 0,
@@ -70,4 +92,35 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginLeft: 10,
   },
+  FlatList: {
+    flex: 1,
+    marginTop: 5,
+  },
+  Item: {
+    marginBottom: 15,
+    padding: 15,
+    borderRadius: 4,
+    backgroundColor: '#eee',
+
+    // display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  Texto: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: 'bold',
+    // marginTop: 4,
+    textAlign: 'center',
+  },
+  Titulo: {
+    fontSize: 30,
+    color: '#000',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  }
 });
