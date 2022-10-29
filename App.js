@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TextInput, View, FlatList, KeyboardAvoidingView, Platform, Keyboard, Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-web';
 
 import { Ionicons, Fontisto } from '@expo/vector-icons'
@@ -9,44 +9,91 @@ export default function App() {
   const [newTask, setNewTask] = useState('');
 
   async function addTask() {
+    if (newTask === '') {
+      return;
+    }
+
+    const search = task.filter(task => task === newTask);
+
+    if (search.length ==! 0) {
+      Alert.alert('Atenção', 'Nome Repetido!');
+      return;
+    }
+
+
     setTask([...task, newTask]);
+    setNewTask('');
+
+    Keyboard.dismiss();
   }
+
+  async function checkTask(item) {
+
+    setTask(task.filter(tasks => tasks ===! item));
+
+  }
+
+  // useEffect(() => {
+  //   async function carregaDados() {
+  //     const task = await
+
+  //     if (task) {
+  //       setTask(JSON.parse(task)
+  //     }
+  //   }
+  //   carregaDados();
+  // })
+
+  // useEffect(() => {
+  //   async function salvaDados() {
+
+  //   }
+  // })
 
   return (
     <>
-      <View style={styles.container}>
-        <View style={styles.Body}>
-          <View>
-            <Text style={styles.Titulo}>Lista de Tarefas</Text>
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={0}
+        behavior='padding'
+        style={{ flex: 1 }}
+        enabled={Platform.OS === 'ios'}
+      >
+        <View style={styles.container}>
+          <View style={styles.Body}>
+            <View>
+              <Text style={styles.Titulo}>Lista de Tarefas</Text>
+            </View>
+            <FlatList
+              style={styles.FlatList}
+              data={task}
+              keyExtractor={item => item.toString()}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <View style={styles.Item}>
+                  <Text style={styles.Texto}>{item}</Text>
+                  <TouchableOpacity onPress={() => checkTask(item)}>
+                    <Fontisto name='checkbox-passive' size={25} color='#f64c75' />
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
           </View>
-          <FlatList
-            style={styles.FlatList}
-            data={task}
-            keyExtractor={item => item.toString()}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={styles.Item}>
-                <Text style={styles.Texto}>{item}</Text>
-                <TouchableOpacity>
-                  <Fontisto name='checkbox-passive' size={25} color='#f64c75' />
-                </TouchableOpacity>
-              </View>
-            )}
-          />
+          <View style={styles.Form}>
+            <TextInput
+              style={styles.Input}
+              placeholderTextColor='#999'
+              autoCorrect={true}
+              placeholder='Adicione uma tarefa'
+              maxLength={41}
+              onChangeText={text => setNewTask(text)}
+              value={newTask}
+            />
+            <TouchableOpacity style={styles.Button} onPress={() => addTask()}>
+              <Ionicons name='ios-add' size={25} color='25' />
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.Form}>
-          <TextInput
-            style={styles.Input}
-            placeholderTextColor='#999'
-            autoCorrect={true}
-            placeholder='Adicione uma tarefa'
-            maxLength={41}
-          />
-          <TouchableOpacity style={styles.Button} onPress={() => addTask()}>
-            <Ionicons name='ios-add' size={25} color='25' />
-          </TouchableOpacity>
-        </View>
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 }
