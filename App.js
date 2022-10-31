@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, View, FlatList, KeyboardAvoidingView, Platform, Keyboard, Alert } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TextInput, View, FlatList, KeyboardAvoidingView, Platform, Keyboard, Alert, CheckBox } from 'react-native';
 import { TouchableOpacity } from 'react-native-web';
 
 import { Ionicons, Fontisto } from '@expo/vector-icons'
 
 export default function App() {
-  const [task, setTask] = useState(['Adicione novas tarefas', 'Lavar os pratos', 'Tomar banho']);
+  const [task, setTask] = useState(['Estudar']);
   const [newTask, setNewTask] = useState('');
+  const [isSelected, setSelection] = useState(false);
 
   async function addTask() {
     if (newTask === '') {
@@ -15,7 +16,7 @@ export default function App() {
 
     const search = task.filter(task => task === newTask);
 
-    if (search.length ==! 0) {
+    if (search.length == !0) {
       Alert.alert('Atenção', 'Nome Repetido!');
       return;
     }
@@ -27,11 +28,11 @@ export default function App() {
     Keyboard.dismiss();
   }
 
-  async function checkTask(item) {
+  // async function checkTask(item) {
 
-    setTask(task.filter(tasks => tasks ===! item));
+  //   setTask(task.filter(tasks => tasks ===! item));
 
-  }
+  // }
 
   // useEffect(() => {
   //   async function carregaDados() {
@@ -49,6 +50,8 @@ export default function App() {
 
   //   }
   // })
+
+  
 
   return (
     <>
@@ -71,9 +74,11 @@ export default function App() {
               renderItem={({ item }) => (
                 <View style={styles.Item}>
                   <Text style={styles.Texto}>{item}</Text>
-                  <TouchableOpacity onPress={() => checkTask(item)}>
-                    <Fontisto name='checkbox-passive' size={25} color='#f64c75' />
-                  </TouchableOpacity>
+                  <CheckBox
+                    value={isSelected}
+                    onValueChange={setSelection}
+                    style={styles.checkbox}
+                  />
                 </View>
               )}
             />
